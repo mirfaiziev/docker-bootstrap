@@ -1,8 +1,22 @@
+app:
+  image: busybox
+  stdin_open: true
+  volumes:
+     - "./code:/var/www/bootstrap"
 nginx:
   image: nginx
   ports:
     - 8080:80
+  volumes_from:
+    - app
   volumes:
     - "./docker/nginx/bootstrap.conf:/etc/nginx/conf.d/bootstrap.conf"
-    - "./code:/var/www/bootstrap"
-  
+  links:
+    - phpfpm
+
+phpfpm:
+  image: php:5.6-fpm
+  ports:
+    - 9000:9000
+  volumes_from:
+    - app
