@@ -1,3 +1,4 @@
+# for mac os run `docker-machine ip default` to get IP to setup /etc/hosts
 app:
   image: ubuntu
   stdin_open: true
@@ -6,7 +7,7 @@ app:
 nginx:
   image: nginx
   ports:
-    - 8080:80
+    - "8080:80"
   volumes_from:
     - app
   volumes:
@@ -15,8 +16,20 @@ nginx:
     - phpfpm
 
 phpfpm:
-  image: php:5.6-fpm
+  image: php:7-fpm
   ports:
-    - 9000:9000
+    - "9000:9000"
   volumes_from:
     - app
+  links:
+    - db
+db:
+  image: mysql
+  ports:
+    - "3307:3306"
+  environment:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_DATABASE: bootstrap
+  volumes:
+    # todo: copy it
+    - "./docker/.mysql/var/lib/mysql:/var/lib/mysql"
